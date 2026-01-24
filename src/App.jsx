@@ -18,8 +18,9 @@ export default function App() {
   const { token } = useContext(UserContext);
 
   return (
-    <>
+    <div className="app-layout">
       <Navbar />
+      <main className="app-main">
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -41,7 +42,8 @@ export default function App() {
           element={token ? <CartPage /> : <Navigate to="/login" replace />}
         />
       </Routes>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 }

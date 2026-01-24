@@ -81,3 +81,9 @@ button:focus-visible {
   max-height: 100px;
   width: auto;
 }
+
+.app-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
