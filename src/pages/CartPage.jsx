@@ -21,6 +21,30 @@ export default function CartPage() {
     );
   }
 
+const handleCheckoutMock = () => {
+  if (cart.length === 0) return;
+
+  const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+  const newOrder = {
+    id: `ord_${Date.now()}`,
+    date: new Date().toISOString().slice(0, 10),
+    totalItems,
+    totalPrice,
+    items: cart.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      qty: item.qty,
+      image: item.image,
+    })),
+  };
+
+  localStorage.setItem("orders", JSON.stringify([newOrder, ...orders]));
+  clearCart();
+  alert("Compra guardada ✅ Revisa 'Mis compras' en tu perfil.");
+};
+
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -95,13 +119,12 @@ export default function CartPage() {
                 </span>
               </div>
               <button
-                className="btn btn-success w-100 mt-3"
-                onClick={() =>
-                  alert("Comprado (mock). Pago se implementa más adelante.")
-                }
-              >
-                Continuar (mock)
-              </button>
+  className="btn btn-success w-100 mt-3"
+  onClick={handleCheckoutMock}
+>
+  Finalizar compra (mock)
+</button>
+
             </div>
           </div>
         </div>

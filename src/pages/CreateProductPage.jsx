@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 export default function CreateProductPage() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
+  const { token } = useContext(UserContext);
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("PlayStation");
@@ -12,8 +16,14 @@ export default function CreateProductPage() {
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!token) {
+      alert("Debes iniciar sesión para publicar.");
+      navigate("/login");
+      return;
+    }
 
     const newProduct = {
       name,
@@ -25,9 +35,29 @@ export default function CreateProductPage() {
       description,
     };
 
-    console.log("PUBLICACIÓN (mock):", newProduct);
-    alert("Publicación creada (mock). Más adelante se guardará en backend.");
-    navigate("/profile");
+    try {
+      const res = await fetch(`${API_URL}/api/products`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newProduct),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data?.error || "Error al crear publicación");
+        return;
+      }
+
+      alert("Publicación creada ✅");
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      alert("Error de conexión con el servidor");
+    }
   };
 
   return (
@@ -46,6 +76,7 @@ export default function CreateProductPage() {
                 required
               />
             </div>
+
             <div className="col-12 col-md-6">
               <label className="form-label">Categoría</label>
               <select
@@ -60,6 +91,7 @@ export default function CreateProductPage() {
                 <option>PC</option>
               </select>
             </div>
+
             <div className="col-12 col-md-6">
               <label className="form-label">Estado</label>
               <select
@@ -72,6 +104,7 @@ export default function CreateProductPage() {
                 <option>Colección</option>
               </select>
             </div>
+
             <div className="col-12 col-md-4">
               <label className="form-label">Precio (CLP)</label>
               <input
@@ -83,6 +116,7 @@ export default function CreateProductPage() {
                 required
               />
             </div>
+
             <div className="col-12 col-md-4">
               <label className="form-label">Cantidad</label>
               <input
@@ -94,6 +128,7 @@ export default function CreateProductPage() {
                 required
               />
             </div>
+
             <div className="col-12 col-md-4">
               <label className="form-label">URL Imagen</label>
               <input
@@ -103,6 +138,7 @@ export default function CreateProductPage() {
                 onChange={(e) => setImage(e.target.value)}
               />
             </div>
+
             <div className="col-12">
               <label className="form-label">Descripción</label>
               <textarea
@@ -113,9 +149,10 @@ export default function CreateProductPage() {
                 placeholder="Describe el producto..."
               />
             </div>
+
             <div className="col-12 d-flex gap-2">
               <button className="btn btn-success" type="submit">
-                Publicar (mock)
+                Publicar
               </button>
               <button
                 className="btn btn-outline-secondary"
