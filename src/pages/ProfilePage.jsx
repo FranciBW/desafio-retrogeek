@@ -4,13 +4,9 @@ import { UserContext } from "../context/UserContext";
 export default function ProfilePage() {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const { email, token } = useContext(UserContext);
+ const { user, token } = useContext(UserContext);
 
-  const fullName = useMemo(() => {
-    const first = localStorage.getItem("firstName") || "Nombre";
-    const last = localStorage.getItem("lastName") || "Apellido";
-    return `${first} ${last}`;
-  }, []);
+ const fullName = `${user?.firstName ?? "Nombre"} ${user?.lastName ?? "Apellido"}`;
 
   const [orders, setOrders] = useState([]);
 
@@ -112,7 +108,7 @@ export default function ProfilePage() {
 
                 <div className="flex-fill p-3 border rounded-4 bg-light">
                   <div className="text-muted small">Correo</div>
-                  <div className="fw-bold">{email}</div>
+                  <div className="fw-bold">{user?.email ?? "-"}</div>
                 </div>
               </div>
 
