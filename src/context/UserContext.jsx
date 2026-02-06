@@ -53,9 +53,10 @@ export default function UserProvider({ children }) {
   };
 
   useEffect(() => {
-    const validate = async () => {
-      if (!token) return;
+  const validate = async () => {
+    if (!token) return;
 
+    try {
       const res = await fetch(`${API_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -65,16 +66,17 @@ export default function UserProvider({ children }) {
         return;
       }
 
-      const data = await res.json().catch(() => null);
-      if (data?.user) {
-        setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-    };
+      const data = await res.json();
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
+    } catch {
+      logout();
+    }
+  };
 
-    validate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, API_URL]);
+  validate();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [token, API_URL]);
 
   return (
     <UserContext.Provider value={{ token, user, login, register, logout }}>
