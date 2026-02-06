@@ -13,24 +13,22 @@ export default function RegisterPage() {
   const [password2, setPassword2] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (password !== password2) {
-      alert("Las contraseñas no coinciden");
-      return;
-    }
+  if (password !== password2) {
+    alert("Las contraseñas no coinciden");
+    return;
+  }
 
-    try {
-      await register({ firstName, lastName, email, password });
+  try {
+    await register({ firstName, lastName, email, password });
 
-      localStorage.setItem("firstName", firstName);
-      localStorage.setItem("lastName", lastName);
-
-      navigate("/profile");
-    } catch (error) {
-      alert(error.message || "Error al registrarse");
-    }
-  };
+    alert("Registro exitoso. Ahora inicia sesión.");
+    navigate("/login");
+  } catch (error) {
+    alert(error.message || "Error al registrarse");
+  }
+};
 
   return (
     <div className="container py-4" style={{ maxWidth: 560 }}>
