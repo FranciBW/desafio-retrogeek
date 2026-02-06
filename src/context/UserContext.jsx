@@ -6,7 +6,10 @@ export default function UserProvider({ children }) {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [email, setEmail] = useState(localStorage.getItem("email"));
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
 
   const login = async (emailInput, password) => {
     const res = await fetch(`${API_URL}/api/auth/login`, {
@@ -16,13 +19,13 @@ export default function UserProvider({ children }) {
     });
 
     const data = await res.json();
-
     if (!res.ok) throw new Error(data?.error || "Error al iniciar sesión");
 
     setToken(data.token);
-    setEmail(data.email);
+    setUser(data.user);
+
     localStorage.setItem("token", data.token);
-    localStorage.setItem("email", data.email);
+    localStorage.setItem("user", JSON.stringify(data.user));
   };
 
   const register = async (payload) => {
@@ -33,23 +36,22 @@ export default function UserProvider({ children }) {
     });
 
     const data = await res.json();
-
     if (!res.ok) throw new Error(data?.error || "Error al registrarse");
 
-    setToken(data.token);
-    setEmail(data.email);
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("email", data.email);
+    return data;
   };
 
   const logout = () => {
     setToken(null);
-    setEmail(null);
+    setUser(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("lastName");
     localStorage.removeItem("email");
   };
 
-  // opcional: validar token con /me (si falla, desloguea)
   useEffect(() => {
     const validate = async () => {
       if (!token) return;
@@ -58,15 +60,24 @@ export default function UserProvider({ children }) {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) logout();
+      if (!res.ok) {
+        logout();
+        return;
+      }
+
+      const data = await res.json().catch(() => null);
+      if (data?.user) {
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
     };
 
     validate();
- // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, API_URL]);
 
   return (
-    <UserContext.Provider value={{ token, email, login, register, logout }}>
+    <UserContext.Provider value={{ token, user, login, register, logout }}>
       {children}
     </UserContext.Provider>
   );
