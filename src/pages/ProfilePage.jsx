@@ -1,5 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { UserContext } from "../context/UserContext";
+import { Link } from "react-router-dom";
 
 export default function ProfilePage() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -230,14 +231,22 @@ export default function ProfilePage() {
                             </div>
 
                             <div className="mt-auto d-flex gap-2 pt-3">
-                              <button
-                                className="btn btn-outline-secondary btn-sm w-100"
-                                disabled
-                                title="Editar lo hacemos después"
-                              >
-                                Editar
-                              </button>
+  <Link
+    className="btn btn-outline-secondary btn-sm w-100"
+    to={`/edit/${p.id}`}
+    title="Editar publicación"
+  >
+    Editar
+  </Link>
 
+  <button
+    className="btn btn-outline-danger btn-sm w-100"
+    onClick={() => handleDeleteProduct(p.id)}
+  >
+    Eliminar
+  </button>
+</div>
+                            
                               <button
                                 className="btn btn-outline-danger btn-sm w-100"
                                 onClick={() => handleDeleteProduct(p.id)}
