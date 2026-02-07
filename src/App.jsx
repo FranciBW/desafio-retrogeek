@@ -11,6 +11,7 @@ import CreateProductPage from "./pages/CreateProductPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CartPage from "./pages/CartPage";
+import EditProductPage from "./pages/EditProductPage";
 
 import { UserContext } from "./context/UserContext";
 
@@ -41,6 +42,7 @@ export default function App() {
           path="/cart"
           element={token ? <CartPage /> : <Navigate to="/login" replace />}
         />
+        <Route path="/edit/:id" element={<EditProductPage />} />
       </Routes>
       </main>
       <Footer />
