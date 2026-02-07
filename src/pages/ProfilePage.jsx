@@ -111,36 +111,84 @@ export default function ProfilePage() {
                   <div className="fw-bold">{user?.email ?? "-"}</div>
                 </div>
               </div>
+              
+{/* Compras */}
+<div
+  className="mt-4 p-4 border rounded-4"
+  style={{ background: "#fafafa" }}
+>
+  <div className="d-flex justify-content-between align-items-center">
+    <h5 className="mb-0">Mis compras</h5>
 
-              {/* Compras */}
-              <div className="mt-4 p-4 border rounded-4" style={{ background: "#fafafa" }}>
-                <div className="d-flex justify-content-between align-items-center">
-                  <h5 className="mb-0">Mis compras</h5>
+    {orders.length > 0 && (
+      <button
+        className="btn btn-outline-danger btn-sm"
+        onClick={handleClearOrders}
+      >
+        Borrar historial (mock)
+      </button>
+    )}
+  </div>
 
-                  {orders.length > 0 && (
-                    <button
-                      className="btn btn-outline-danger btn-sm"
-                      onClick={handleClearOrders}
-                    >
-                      Borrar historial (mock)
-                    </button>
-                  )}
+  {orders.length === 0 ? (
+    <p className="text-muted mt-2 mb-0">
+      Aún no tienes compras. (Mock: finaliza una compra desde el carrito y se guardará aquí.)
+    </p>
+  ) : (
+    <div className="mt-3 d-grid gap-3">
+      {orders.map((o) => (
+        <div key={o.id} className="border rounded-4 p-3 bg-white">
+          <div className="d-flex justify-content-between">
+            <div>
+              <div className="fw-bold">Orden {o.id}</div>
+              <small className="text-muted">Fecha: {o.date}</small>
+            </div>
+
+            <div className="text-end">
+              <div className="fw-bold">
+                ${Number(o.totalPrice).toLocaleString("es-CL")}
+              </div>
+              <small className="text-muted">{o.totalItems} productos</small>
+            </div>
+          </div>
+
+          <hr className="my-2" />
+
+          <div className="d-grid gap-2">
+            {o.items.map((it) => (
+              <div
+                key={`${o.id}-${it.id}`}
+                className="d-flex align-items-center gap-2"
+              >
+                <img
+                  src={it.image}
+                  alt={it.name}
+                  style={{
+                    width: 46,
+                    height: 36,
+                    objectFit: "cover",
+                    borderRadius: 8,
+                  }}
+                />
+
+                <div className="flex-grow-1">
+                  <div className="fw-semibold">{it.name}</div>
+                  <small className="text-muted">
+                    {it.qty} x ${Number(it.price).toLocaleString("es-CL")}
+                  </small>
                 </div>
 
-                {orders.length === 0 ? (
-                  <p className="text-muted mt-2 mb-0">
-                    Aún no tienes compras. (Mock)
-                  </p>
-                ) : (
-                  <div className="mt-3 d-grid gap-3">
-                    {orders.map((o) => (
-                      <div key={o.id} className="border rounded-4 p-3 bg-white">
-                        <div className="fw-bold">Orden {o.id}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="fw-semibold">
+                  ${(Number(it.price) * Number(it.qty)).toLocaleString("es-CL")}
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
               {/* Publicaciones */}
               <div className="mt-3 p-4 border rounded-4" style={{ background: "#fafafa" }}>
